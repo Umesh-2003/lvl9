@@ -7,7 +7,7 @@
     "dialect": "postgres"
   },
   "test": {
-    "username": "ptgres",
+    "username": "postgres",
     "password": "vineeth123",
     "database": "wd-todo-test",
     "host": "127.0.0.1",
