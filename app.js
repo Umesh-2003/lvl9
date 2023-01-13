@@ -1,6 +1,6 @@
-const express = require("express");
-const app = express();
+const express = require("express"); //importing express
 var csrf = require("tiny-csrf");
+const app = express(); // creating new application
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 app.use(bodyParser.json());
@@ -10,9 +10,9 @@ const { Todo } = require("./models");
 const todo = require("./models/todo");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser("shh! some secret string"));
+//SET EJS AS VIEW ENGINE
+app.use(cookieParser("shh! some secrete string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
-
 app.set("view engine", "ejs");
 app.get("/", async (request, response) => {
   const allTodos = await Todo.getTodos();
@@ -25,13 +25,13 @@ app.get("/", async (request, response) => {
       title: "Todo Application",
       allTodos,
       overdue,
-      dueLater,
       dueToday,
+      dueLater,
       completedItems,
       csrfToken: request.csrfToken(),
     });
   } else {
-    response.json(overdue, dueLater, dueToday, completedItems);
+    response.json({ overdue, dueToday, dueLater, completedItems });
   }
 });
 
@@ -73,7 +73,7 @@ app.post("/todos", async (request, response) => {
 });
 //PUT https://mytodoapp.com/todos/123/markAscomplete
 app.put("/todos/:id", async (request, response) => {
-  console.log("Mark Todo as completed:", request.params.id);
+  console.log("we have to update a todo with ID:", request.params.id);
   const todo = await Todo.findByPk(request.params.id);
   try {
     const updatedtodo = await todo.setCompletionStatus(request.body.completed);
@@ -83,6 +83,17 @@ app.put("/todos/:id", async (request, response) => {
     return response.status(422).json(error);
   }
 });
+// app.put("/todos/:id/markAsCompleted", async (request, response) => {
+//   console.log("we have to update a todo with ID:", request.params.id);
+//   const todo = await Todo.findByPk(request.params.id);
+//   try {
+//     const updatedtodo = await todo.setCompletionStatus(request.body.completed);
+//     return response.json(updatedtodo);
+//   } catch (error) {
+//     console.log(error);
+//     return response.status(422).json(error);
+//   }
+// });
 app.delete("/todos/:id", async (request, response) => {
   console.log("delete a todo with ID:", request.params.id);
   try {
